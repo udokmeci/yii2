@@ -37,7 +37,7 @@ echo $model->name;
 ```
 
 You can also access attributes like accessing array elements, thanks to the support for
-[ArrayAccess](http://php.net/manual/en/class.arrayaccess.php) and [ArrayIterator](http://php.net/manual/en/class.arrayiterator.php)
+[ArrayAccess](https://secure.php.net/manual/en/class.arrayaccess.php) and [Traversable](https://secure.php.net/manual/en/class.traversable.php)
 by [[yii\base\Model]]:
 
 ```php
@@ -47,7 +47,7 @@ $model = new \app\models\ContactForm;
 $model['name'] = 'example';
 echo $model['name'];
 
-// iterate attributes
+// Model is traversable using foreach.
 foreach ($model as $name => $value) {
     echo "$name: $value\n";
 }
@@ -165,10 +165,10 @@ setting the scenario of a model:
 ```php
 // scenario is set as a property
 $model = new User;
-$model->scenario = 'login';
+$model->scenario = User::SCENARIO_LOGIN;
 
 // scenario is set through configuration
-$model = new User(['scenario' => 'login']);
+$model = new User(['scenario' => User::SCENARIO_LOGIN]);
 ```
 
 By default, the scenarios supported by a model are determined by the [validation rules](#validation-rules) declared
@@ -182,11 +182,14 @@ use yii\db\ActiveRecord;
 
 class User extends ActiveRecord
 {
+    const SCENARIO_LOGIN = 'login';
+    const SCENARIO_REGISTER = 'register';
+
     public function scenarios()
     {
         return [
-            'login' => ['username', 'password'],
-            'register' => ['username', 'email', 'password'],
+            self::SCENARIO_LOGIN => ['username', 'password'],
+            self::SCENARIO_REGISTER => ['username', 'email', 'password'],
         ];
     }
 }
@@ -211,11 +214,14 @@ use yii\db\ActiveRecord;
 
 class User extends ActiveRecord
 {
+    const SCENARIO_LOGIN = 'login';
+    const SCENARIO_REGISTER = 'register';
+
     public function scenarios()
     {
         $scenarios = parent::scenarios();
-        $scenarios['login'] = ['username', 'password'];
-        $scenarios['register'] = ['username', 'email', 'password'];
+        $scenarios[self::SCENARIO_LOGIN] = ['username', 'password'];
+        $scenarios[self::SCENARIO_REGISTER] = ['username', 'email', 'password'];
         return $scenarios;
     }
 }
@@ -236,8 +242,8 @@ should be displayed to help the user to fix the errors.
 
 You may call [[yii\base\Model::validate()]] to validate the received data. The method will use
 the validation rules declared in [[yii\base\Model::rules()]] to validate every relevant attribute. If no error
-is found, it will return true. Otherwise, it will keep the errors in the [[yii\base\Model::errors]] property
-and return false. For example,
+is found, it will return `true`. Otherwise, it will keep the errors in the [[yii\base\Model::errors]] property
+and return `false`. For example,
 
 ```php
 $model = new \app\models\ContactForm;
@@ -283,10 +289,10 @@ public function rules()
 {
     return [
         // username, email and password are all required in "register" scenario
-        [['username', 'email', 'password'], 'required', 'on' => 'register'],
+        [['username', 'email', 'password'], 'required', 'on' => self::SCENARIO_REGISTER],
 
         // username and password are required in "login" scenario
-        [['username', 'password'], 'required', 'on' => 'login'],
+        [['username', 'password'], 'required', 'on' => self::SCENARIO_LOGIN],
     ];
 }
 ```
@@ -333,8 +339,8 @@ be kept untouched.
 public function scenarios()
 {
     return [
-        'login' => ['username', 'password'],
-        'register' => ['username', 'email', 'password'],
+        self::SCENARIO_LOGIN => ['username', 'password'],
+        self::SCENARIO_REGISTER => ['username', 'email', 'password'],
     ];
 }
 ```
@@ -373,7 +379,7 @@ name when declaring it in `scenarios()`, like the `secret` attribute in the foll
 public function scenarios()
 {
     return [
-        'login' => ['username', 'password', '!secret'],
+        self::SCENARIO_LOGIN => ['username', 'password', '!secret'],
     ];
 }
 ```
@@ -386,13 +392,29 @@ have to do it explicitly as follows,
 $model->secret = $secret;
 ```
 
+The same can be done in `rules()` method:
+
+```php
+public function rules()
+{
+    return [
+        [['username', 'password', '!secret'], 'required', 'on' => 'login']
+    ];
+}
+```
+
+In this case attributes `username`, `password` and `secret` are required, but `secret` must be assigned explicitly.
+
 
 ## Data Exporting <span id="data-exporting"></span>
 
 Models often need to be exported in different formats. For example, you may want to convert a collection of
-models into JSON or Excel format. The exporting process can be broken down into two independent steps.
-In the first step, models are converted into arrays; in the second step, the arrays are converted into
-target formats. You may just focus on the first step, because the second step can be achieved by generic
+models into JSON or Excel format. The exporting process can be broken down into two independent steps:
+
+- models are converted into arrays;
+- the arrays are converted into target formats.
+
+You may just focus on the first step, because the second step can be achieved by generic
 data formatters, such as [[yii\web\JsonResponseFormatter]].
 
 The simplest way of converting a model into an array is to use the [[yii\base\Model::$attributes]] property.

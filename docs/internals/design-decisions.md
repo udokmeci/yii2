@@ -13,7 +13,7 @@ the core developers.
    exceptions about the code etc. should not be translated. Console messages are always in English because of encoding
    and codepage handling difficulties.
 3. **[Adding new auth client support](https://github.com/yiisoft/yii2/issues/1652)**
-   For better maintenability, we will not add any additional auth clients to the core extension. They should be done 
+   For better maintainability, we will not add any additional auth clients to the core extension. They should be done 
    in terms of user extensions. 
 4. **When using closures** it is recommended to **include all passed parameters** in the signature even if not all of them are
    used. This way modifying or copying code is easier because all information is directly visible and it is not necessary to
@@ -23,3 +23,7 @@ the core developers.
    Also although unsigned int doubles the size, if you have a table that needs such big number space,
    then it's safer to use bigint or mediumint rather than relying on unsigned.
    <https://github.com/yiisoft/yii/pull/1923#issuecomment-11881967>
+6. [Helpers vs separate non-static classes](https://github.com/yiisoft/yii2/pull/12661#issuecomment-251599463)
+7. **Setters method chaining** should be avoided if there are methods in the classs returning meaningful values. Chaining could be
+   supported if a class is a builder where all setters are modifying internal state: https://github.com/yiisoft/yii2/issues/13026
+8. **Global exception/error handler** is used instead of local try-catch because it is reliable in terms of catching destructors and everything that happens outside the scope of the `run()` method such as bootstrap. See [#14348](https://github.com/yiisoft/yii2/issues/14348).

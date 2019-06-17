@@ -15,7 +15,7 @@ para o usuário final, tais como erros de validação.
 Os passos para iniciar a tradução de mensagens são:
 
 1. Com o `console` entre na pasta `yii2/framework`  e execute o seguinte comando:
-   `yii message/extract messages/config.php`.
+   `./yii message/extract @yii/messages/config.php --languages=pt-BR`.
 2. As mensagens a serem traduzidas encontram-se no seguinte caminho:
    `framework/messages/pt-BR/yii.php`. Certifique-se de salvar o arquivo com a
    codificação UTF-8 (Plain).
@@ -26,7 +26,7 @@ Os passos para iniciar a tradução de mensagens são:
 
 Para manter as traduções sempre atualizadas, certifique-se que seu fork do Yii
 esteja com a última versão. Em seguida, basta executar o comando
-`yii message/extract messages/config.php` novamente e o mesmo irá adicionar
+`./yii message/extract @yii/messages/config.php --languages=pt-BR` novamente e o mesmo irá adicionar
 automaticamente as novas mensagens a serem traduzidas.
 
 No arquivo de tradução cada elemento do array representa a tradução de uma
@@ -74,7 +74,7 @@ Regras e Observações
 
 - action — ação
 - application system - sistema
-- application template — template de aplicação
+- project template — template de projetos
 - controller — controller (controlador)
 - eager loading — eager loading (carregamento na inicialização)
 - lazy loading — lazy loading (carregamento retardado)
@@ -88,6 +88,12 @@ Regras e Observações
 - attribute label - label do atributo
 - inline action — ação inline
 - standalone action — ação standalone
+- advanced project template — template avançado de projetos
+- basic project template — template básico de projetos
+- behaviors — behaviors (comportamentos)
+- pretty URL — URL amigável (pretty URL)
+- class member variable - atributo da classe
+- endpoint - URL (também chamadas *endpoints*)
 
 ### Termos Sem Tradução
 
@@ -105,3 +111,8 @@ Regras e Observações
 - backend
 - frontend
 - web service
+- template
+- query string
+- case-sensitive
+- case-insensitive
+- callback

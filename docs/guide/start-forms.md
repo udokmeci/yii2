@@ -10,9 +10,9 @@ two [views](structure-views.md), you will also create a [model](structure-models
 
 Through this tutorial, you will learn how to:
 
-* Create a [model](structure-models.md) to represent the data entered by a user through a form
-* Declare rules to validate the data entered
-* Build an HTML form in a [view](structure-views.md)
+* create a [model](structure-models.md) to represent the data entered by a user through a form,
+* declare rules to validate the data entered,
+* build an HTML form in a [view](structure-views.md).
 
 
 Creating a Model <span id="creating-model"></span>
@@ -59,8 +59,8 @@ of rules for validating the data. The validation rules declared above state that
 * the `email` data must be a syntactically valid email address
 
 If you have an `EntryForm` object populated with the data entered by a user, you may call
-its [[yii\base\Model::validate()|validate()]] to trigger the data validation routines. A data validation
-failure will set the [[yii\base\Model::hasErrors|hasErrors]] property to true, and you may learn what validation
+its [[yii\base\Model::validate()|validate()]] method to trigger the data validation routines. A data validation
+failure will set the [[yii\base\Model::hasErrors|hasErrors]] property to `true`, and you may learn what validation
 errors occurred through [[yii\base\Model::getErrors|errors]].
 
 ```php
@@ -187,7 +187,7 @@ Trying it Out <span id="trying-it-out"></span>
 To see how it works, use your browser to access the following URL:
 
 ```
-http://hostname/index.php?r=site/entry
+http://hostname/index.php?r=site%2Fentry
 ```
 
 You will see a page displaying a form with two input fields. In front of each input field, a label indicates what data is to be entered. If you click the submit button without
@@ -208,10 +208,10 @@ You may wonder how the HTML form works behind the scene, because it seems almost
 display a label for each input field and show error messages if you do not enter the data correctly
 without reloading the page.
 
-Yes, the data validation is initially done on the client side using JavaScript, and secondarily performed on the server side via PHP.
+Yes, the data validation is initially done on the client-side using JavaScript, and secondarily performed on the server-side via PHP.
 [[yii\widgets\ActiveForm]] is smart enough to extract the validation rules that you have declared in `EntryForm`,
 turn them into executable JavaScript code, and use the JavaScript to perform data validation. In case you have disabled
-JavaScript on your browser, the validation will still be performed on the server side, as shown in
+JavaScript on your browser, the validation will still be performed on the server-side, as shown in
 the `actionEntry()` method. This ensures data validity in all circumstances.
 
 > Warning: Client-side validation is a convenience that provides for a better user experience. Server-side validation
@@ -236,7 +236,7 @@ the following code:
 Summary <span id="summary"></span>
 -------
 
-In this section of the guide, you have touched every part in the MVC design pattern. You have learned how
+In this section of the guide, you have touched every part in the MVC architectural pattern. You have learned how
 to create a model class to represent the user data and validate said data.
 
 You have also learned how to get data from users and how to display data back in the browser. This is a task that

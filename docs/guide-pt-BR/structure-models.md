@@ -43,8 +43,8 @@ echo $model->name;
 ```
 
 Você também pode acessar os atributos como elementos de um array, graças ao suporte 
-de [ArrayAccess](http://php.net/manual/en/class.arrayaccess.php) e 
-[ArrayIterator](http://php.net/manual/en/class.arrayiterator.php) pelo 
+de [ArrayAccess](https://secure.php.net/manual/en/class.arrayaccess.php) e 
+[ArrayIterator](https://secure.php.net/manual/en/class.arrayiterator.php) pelo 
 [[yii\base\Model]]:
 
 ```php
@@ -266,8 +266,8 @@ mensagens apropriadas de erros serão exibidas para ajudar o usuário a corrigi-
 Você pode chamar o método [[yii\base\Model::validate()]] para validar os dados 
 recebidos. O método usará as regras de validação declaradas em [[yii\base\Model::rules()]] 
 para validar todos os atributos relevantes. Se nenhum erro for encontrado, o método 
-retornará true. Caso contrário, o método irá manter os erros na propriedade 
-[[yii\base\Model::errors]] e retornará false. Por exemplo,
+retornará `true`. Caso contrário, o método irá manter os erros na propriedade 
+[[yii\base\Model::errors]] e retornará `false`. Por exemplo,
 
 ```php
 $model = new \app\models\ContactForm;
@@ -568,7 +568,7 @@ estenderá a classe model (modelo) base que a corresponde. A classe model (model
 concreta irá conter apenas as regras e lógicas que são específicas de uma aplicação 
 ou módulo.
 
-Por exemplo, no [Template Avançado de Aplicação](tutorial-advanced-app.md), você 
+Por exemplo, no [Template Avançado de Projetos](tutorial-advanced-app.md), você 
 pode definir uma classe model (modelo) base `common\models\Post`. Em seguida, 
 para a aplicação front-end, você define uma classe model (modelo) concreta 
 `frontend\models\Post` que estende de `common\models\Post`. E de forma similar 

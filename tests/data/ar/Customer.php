@@ -1,17 +1,23 @@
 <?php
+/**
+ * @link http://www.yiiframework.com/
+ * @copyright Copyright (c) 2008 Yii Software LLC
+ * @license http://www.yiiframework.com/license/
+ */
+
 namespace yiiunit\data\ar;
 
 use yii\db\ActiveQuery;
 use yiiunit\framework\db\ActiveRecordTest;
 
 /**
- * Class Customer
+ * Class Customer.
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
  * @property string $email
  * @property string $address
- * @property integer $status
+ * @property int $status
  *
  * @method CustomerQuery findBySql($sql, $params = []) static
  */
@@ -21,6 +27,8 @@ class Customer extends ActiveRecord
     const STATUS_INACTIVE = 2;
 
     public $status2;
+
+    public $sumTotal;
 
     public static function tableName()
     {
@@ -32,6 +40,11 @@ class Customer extends ActiveRecord
         return $this->hasOne(Profile::className(), ['id' => 'profile_id']);
     }
 
+    public function getOrdersPlain()
+    {
+        return $this->hasMany(Order::className(), ['customer_id' => 'id']);
+    }
+
     public function getOrders()
     {
         return $this->hasMany(Order::className(), ['customer_id' => 'id'])->orderBy('id');
@@ -40,6 +53,11 @@ class Customer extends ActiveRecord
     public function getExpensiveOrders()
     {
         return $this->hasMany(Order::className(), ['customer_id' => 'id'])->andWhere('[[total]] > 50')->orderBy('id');
+    }
+
+    public function getOrdersWithItems()
+    {
+        return $this->hasMany(Order::className(), ['customer_id' => 'id'])->with('orderItems');
     }
 
     public function getExpensiveOrdersWithNullFK()
@@ -77,11 +95,11 @@ class Customer extends ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * @return CustomerQuery
      */
     public static function find()
     {
-        return new CustomerQuery(get_called_class());
+        return new CustomerQuery(\get_called_class());
     }
 }

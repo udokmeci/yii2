@@ -60,7 +60,7 @@ public function init()
 {
     parent::init();
     // initialize the module with the configuration loaded from config.php
-    \Yii::configure($this, require(__DIR__ . '/config.php'));
+    \Yii::configure($this, require __DIR__ . '/config.php');
 }
 ```
 
@@ -118,6 +118,31 @@ the [[yii\base\Module::layout]] property to point to the layout name. If you do 
 the application's layout will be used instead.
 
 
+### Console commands in Modules <span id="console-commands-in-modules"></span>
+
+Your module may also declare commands, that will be available through the [Console](tutorial-console.md) mode.
+
+In order for the command line utility to see your commands, you will need to change the [[yii\base\Module::controllerNamespace]]
+property, when Yii is executed in the console mode, and point it to your commands namespace.
+
+One way to achieve that is to test the instance type of the Yii application in the module's `init()` method:
+
+```php
+public function init()
+{
+    parent::init();
+    if (Yii::$app instanceof \yii\console\Application) {
+        $this->controllerNamespace = 'app\modules\forum\commands';
+    }
+}
+```
+
+Your commands will then be available from the command line using the following route:
+
+```
+yii <module_id>/<command>/<sub_command>
+```
+
 ## Using Modules <span id="using-modules"></span>
 
 To use a module in an application, simply configure the application by listing the module in
@@ -144,11 +169,20 @@ array value is a [configuration](concept-configurations.md) for creating the mod
 
 Like accessing controllers in an application, [routes](structure-controllers.md#routes) are used to address
 controllers in a module. A route for a controller within a module must begin with the module ID followed by
-the controller ID and action ID. For example, if an application uses a module named `forum`, then the route
+the [controller ID](structure-controllers.md#controller-ids) and [action ID](structure-controllers.md#action-ids).
+For example, if an application uses a module named `forum`, then the route
 `forum/post/index` would represent the `index` action of the `post` controller in the module. If the route
 only contains the module ID, then the [[yii\base\Module::defaultRoute]] property, which defaults to `default`,
 will determine which controller/action should be used. This means a route `forum` would represent the `default`
 controller in the `forum` module.
+
+The URL manager rules for the modules should be added before [[yii\web\UrlManager::parseRequest()]] is fired. That means doing it 
+in module's `init()` won't work because module will be initialized when routes were already processed. Thus, the rules
+should be added at [bootstrap stage](structure-extensions.md#bootstrapping-classes). It is a also a good practice
+to wrap module's URL rules with [[\yii\web\GroupUrlRule]].  
+
+In case a module is used to [version API](rest-versioning.md), its URL rules should be added directly in `urlManager` 
+section of the application config.
 
 
 ### Accessing Modules <span id="accessing-modules"></span>
@@ -162,7 +196,7 @@ $module = MyModuleClass::getInstance();
 
 where `MyModuleClass` refers to the name of the module class that you are interested in. The `getInstance()` method
 will return the currently requested instance of the module class. If the module is not requested, the method will
-return null. Note that you do not want to manually create a new instance of the module class because it will be
+return `null`. Note that you do not want to manually create a new instance of the module class because it will be
 different from the one created by Yii in response to a request.
 
 > Info: When developing a module, you should not assume the module will use a fixed ID. This is because a module
@@ -243,6 +277,38 @@ in the `admin` module which is a child module of the `forum` module.
 to its parent. The [[yii\base\Application::loadedModules]] property keeps a list of loaded modules, including both
 direct children and nested ones, indexed by their class names.
 
+## Accessing components from within modules
+
+Since version 2.0.13 modules support [tree traversal](concept-service-locator.md#tree-traversal). This allows module 
+developers to reference (application) components via the service locator that is their module.
+This means that it is preferable to use `$module->get('db')` over `Yii::$app->get('db')`.
+The user of a module is able to specify a specific component to be used for the module in case a different component
+(configuration) is required.
+
+For example consider partial this application configuration:
+
+```php
+'components' => [
+    'db' => [
+        'tablePrefix' => 'main_',
+        'class' => Connection::class,
+        'enableQueryCache' => false
+    ],
+],
+'modules' => [
+    'mymodule' => [
+        'components' => [
+            'db' => [
+                'tablePrefix' => 'module_',
+                'class' => Connection::class
+            ],
+        ],
+    ],
+],
+```
+
+The application database tables will be prefixed with `main_`, while all module tables will be prefixed with `module_`.
+Note that configuration above is not merged; the modules' component for example will have the query cache enabled since that is the default value.
 
 ## Best Practices <span id="best-practices"></span>
 
